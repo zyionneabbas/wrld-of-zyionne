@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const http = require('http')
 const { initSocket } = require('./socket')
+const { startScheduler } = require('./cron/scheduler')
 
 const authRoutes = require('./routes/auth')
 const postRoutes = require('./routes/posts')
@@ -14,6 +15,10 @@ const storyRoutes = require('./routes/stories')
 const snapRoutes = require('./routes/snaps')
 const messageRoutes = require('./routes/messages')
 const friendRoutes = require('./routes/friends')
+const discoverRoutes = require('./routes/discover')
+const forumRoutes = require('./routes/forums')
+const communityRoutes = require('./routes/communities')
+const moderationRoutes = require('./routes/moderation')
 
 const app = express()
 const server = http.createServer(app)
@@ -26,11 +31,14 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('Connected to MongoDB'))
+  .then(() => {
+    console.log('Connected to MongoDB')
+    startScheduler() // ← start scheduler after DB connects
+  })
   .catch((err) => console.error('Error connecting to MongoDB:', err))
 
 app.get('/', (req, res) => {
-  res.send('WRLD OF ZYIONNE server is running!')
+  res.send('WRLD server is running!')
 })
 
 app.use('/api/auth', authRoutes)
@@ -41,7 +49,11 @@ app.use('/api/stories', storyRoutes)
 app.use('/api/snaps', snapRoutes)
 app.use('/api/messages', messageRoutes)
 app.use('/api/friends', friendRoutes)
+app.use('/api/discover', discoverRoutes)
+app.use('/api/forums', forumRoutes)
+app.use('/api/communities', communityRoutes)
+app.use('/api/moderation', moderationRoutes)
 
 server.listen(port, () => {
-  console.log(`Server is running on port ${port}`)
+  console.log(`WRLD server is running on port ${port}`)
 })

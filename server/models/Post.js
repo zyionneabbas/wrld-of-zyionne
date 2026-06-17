@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const PostSchema = new mongoose.Schema({
   author: {
@@ -8,7 +8,7 @@ const PostSchema = new mongoose.Schema({
   },
   content: {
     type: String,
-    default: '',
+    default: ''
   },
   media: [{
     url: { type: String },
@@ -25,7 +25,7 @@ const PostSchema = new mongoose.Schema({
     },
     content: {
       type: String,
-      required: true,
+      required: true
     },
     likes: [{
       type: mongoose.Schema.Types.ObjectId,
@@ -46,14 +46,35 @@ const PostSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
+  status: {
+    type: String,
+    enum: ['published', 'scheduled', 'draft', 'archived'],
+    default: 'published'
+  },
+  publishAt: {
+    type: Date,
+    default: null
+  },
   isArchived: {
+    type: Boolean,
+    default: false
+  },
+  isPinned: {
     type: Boolean,
     default: false
   },
   views: {
     type: Number,
     default: 0
-  }
-}, { timestamps: true });
+  },
+  reports: [{
+    reportedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    reason: { type: String },
+    createdAt: { type: Date, default: Date.now }
+  }]
+}, { timestamps: true })
 
-module.exports = mongoose.model('Post', PostSchema);
+module.exports = mongoose.model('Post', PostSchema)
