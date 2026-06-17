@@ -6,6 +6,7 @@ const Hashtag = require('../models/Hashtag')
 const Forum = require('../models/Forum')
 const Community = require('../models/Community')
 const auth = require('../middleware/auth')
+const Article = require('../models/Article')
 
 // SEARCH everything
 router.get('/search', auth, async (req, res) => {
@@ -165,6 +166,56 @@ router.get('/hashtag/:name', auth, async (req, res) => {
       .limit(20)
 
     res.json({ hashtag, posts })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// SUGGESTED articles
+router.get('/suggested/articles', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+
+    const articles = await Article.find({
+      status: 'published',
+      author: { $nin: [req.user.id] }
+    })
+      .populate('author', 'username displayName avatar verified')
+      .sort({ views: -1, likes: -1 })
+      .limit(10)
+
+    res.json(articles)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// SUGGESTED communities
+router.get('/suggested/communities', auth, async (req, res) => {
+  try {
+    const Community = require('../models/Community')
+
+    const communities = await Community.find({ isPublic: true })
+      .sort({ memberCount: -1 })
+      .limit(10)
+
+    res.json(communities)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// SUGGESTED forums
+router.get('/suggested/forums', auth, async (req, res) => {
+  try {
+    const Forum = require('../models/Forum')
+
+    const forums = await Forum.find({ isPrivate: false })
+      .populate('creator', 'username displayName avatar verified')
+      .sort({ postCount: -1, 'members': -1 })
+      .limit(10)
+
+    res.json(forums)
   } catch (err) {
     res.status(500).json({ error: err.message })
   }

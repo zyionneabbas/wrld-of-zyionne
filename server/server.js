@@ -19,6 +19,8 @@ const discoverRoutes = require('./routes/discover')
 const forumRoutes = require('./routes/forums')
 const communityRoutes = require('./routes/communities')
 const moderationRoutes = require('./routes/moderation')
+const archiveRoutes = require('./routes/archive')
+const articleRoutes = require('./routes/articles')
 
 const app = express()
 const server = http.createServer(app)
@@ -33,7 +35,7 @@ app.use(cors())
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('Connected to MongoDB')
-    startScheduler() // ← start scheduler after DB connects
+    startScheduler()
   })
   .catch((err) => console.error('Error connecting to MongoDB:', err))
 
@@ -53,6 +55,8 @@ app.use('/api/discover', discoverRoutes)
 app.use('/api/forums', forumRoutes)
 app.use('/api/communities', communityRoutes)
 app.use('/api/moderation', moderationRoutes)
+app.use('/api/archive', archiveRoutes)
+app.use('/api/articles', articleRoutes)
 
 server.listen(port, () => {
   console.log(`WRLD server is running on port ${port}`)

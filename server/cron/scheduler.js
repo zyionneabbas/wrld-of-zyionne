@@ -1,39 +1,49 @@
 const cron = require('node-cron')
 const Post = require('../models/Post')
+const Article = require('../models/Article')
 
 const startScheduler = () => {
 
-  // Runs every minute
   cron.schedule('* * * * *', async () => {
     try {
       const now = new Date()
 
-      // Find all scheduled posts whose publish time has passed
+      // Publish scheduled posts
       const postsToPublish = await Post.find({
         status: 'scheduled',
         publishAt: { $lte: now }
       })
 
-      if (postsToPublish.length === 0) return
+      if (postsToPublish.length > 0) {
+        const postIds = postsToPublish.map(p => p._id)
+        await Post.updateMany(
+          { _id: { $in: postIds } },
+          { status: 'published', publishAt: null }
+        )
+        console.log(`✅ Published ${postsToPublish.length} scheduled post(s)`)
+      }
 
-      // Publish each one
-      const ids = postsToPublish.map(p => p._id)
+      // Publish scheduled articles
+      const articlesToPublish = await Article.find({
+        status: 'scheduled',
+        publishAt: { $lte: now }
+      })
 
-      await Post.updateMany(
-        { _id: { $in: ids } },
-        {
-          status: 'published',
-          publishAt: null
-        }
-      )
+      if (articlesToPublish.length > 0) {
+        const articleIds = articlesToPublish.map(a => a._id)
+        await Article.updateMany(
+          { _id: { $in: articleIds } },
+          { status: 'published', publishAt: null }
+        )
+        console.log(`✅ Published ${articlesToPublish.length} scheduled article(s)`)
+      }
 
-      console.log(`✅ Published ${postsToPublish.length} scheduled post(s) at ${now.toISOString()}`)
     } catch (err) {
       console.error('Scheduler error:', err.message)
     }
   })
 
-  console.log('📅 Post scheduler is running')
+  console.log('📅 Scheduler is running')
 }
 
 module.exports = { startScheduler }
