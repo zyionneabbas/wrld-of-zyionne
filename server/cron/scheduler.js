@@ -97,4 +97,57 @@ const startScheduler = () => {
   console.log('📅 WRLD Scheduler is running')
 }
 
+// Check WRLD Mini users for age bracket updates and graduation
+const MiniUser = require('../models/MiniWRLD/MiniUser')
+
+cron.schedule('0 0 * * *', async () => {
+  try {
+    const today = new Date()
+    const miniUsers = await MiniUser.find({ hasGraduated: false })
+
+    for (const miniUser of miniUsers) {
+      const birth = new Date(miniUser.dateOfBirth)
+      let age = today.getFullYear() - birth.getFullYear()
+      const monthDiff = today.getMonth() - birth.getMonth()
+      if (monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < birth.getDate())) {
+        age--
+      }
+
+      // Auto update age bracket and content access
+      let newBracket = 'teen_13_15'
+      if (age >= 18) newBracket = 'young_adult_18_20'
+      else if (age >= 16) newBracket = 'teen_16_17'
+
+      if (newBracket !== miniUser.ageBracket) {
+        miniUser.ageBracket = newBracket
+        miniUser.age = age
+        miniUser.contentAccess = {
+          canPostVideos: true,
+          canGoLive: age >= 16,
+          canJoinForums: true,
+          canJoinCommunities: true,
+          canWriteArticles: age >= 16,
+          canSendSnaps: true,
+          canViewExplore: true,
+          maxDailyScreenMinutes: age >= 18 ? 0 : 180
+        }
+        await miniUser.save()
+        console.log(`📈 ${miniUser.displayName} upgraded to ${newBracket}`)
+      }
+
+      // Notify if eligible for graduation
+      if (age >= 21) {
+        const io = getIO()
+        io.to(miniUser._id.toString()).emit('graduationReady', {
+          message: 'You are now 21! Graduate to the full WRLD experience. 🎓'
+        })
+        console.log(`🎓 ${miniUser.displayName} is eligible to graduate from WRLD Mini`)
+      }
+    }
+  } catch (err) {
+    console.error('Mini graduation check error:', err.message)
+  }
+})
+
 module.exports = { startScheduler }
