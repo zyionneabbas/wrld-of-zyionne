@@ -1,3 +1,3 @@
-export default function PageName() {
-  return <div className="text-white p-8">PageName coming soon</div>
-}
+      export default function Feed() {
+        return <div className="text-white p-8">Feed coming soon</div>
+      }

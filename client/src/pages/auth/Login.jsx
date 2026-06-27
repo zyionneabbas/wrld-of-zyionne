@@ -28,10 +28,45 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4"
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
       style={{ backgroundColor: 'var(--color-bg)' }}>
 
-      <div className="w-full max-w-md">
+      {/* Background orbs — behind everything */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div style={{
+          position: 'absolute',
+          top: '-15%',
+          left: '-10%',
+          width: '500px',
+          height: '500px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(255,215,0,0.18) 0%, transparent 70%)',
+          animation: 'float 8s ease-in-out infinite'
+        }} />
+        <div style={{
+          position: 'absolute',
+          bottom: '-20%',
+          right: '-10%',
+          width: '600px',
+          height: '600px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(255,215,0,0.14) 0%, transparent 70%)',
+          animation: 'float 10s ease-in-out infinite reverse'
+        }} />
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          right: '15%',
+          width: '250px',
+          height: '250px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(184,150,12,0.12) 0%, transparent 70%)',
+          animation: 'float 6s ease-in-out infinite 2s'
+        }} />
+      </div>
+
+      {/* Content — above background */}
+      <div className="w-full max-w-md relative z-10">
 
         {/* Logo */}
         <div className="text-center mb-10">
@@ -49,7 +84,8 @@ export default function Login() {
         <div className="rounded-2xl p-8"
           style={{
             backgroundColor: 'var(--color-bg-card)',
-            border: '1px solid var(--color-border)'
+            border: '1px solid var(--color-border)',
+            backdropFilter: 'blur(12px)'
           }}>
 
           <h2 className="text-xl font-bold mb-6"
@@ -122,7 +158,9 @@ export default function Login() {
               disabled={loading}
               className="w-full py-3 rounded-xl font-bold text-sm tracking-widest uppercase transition-all mt-2"
               style={{
-                backgroundColor: loading ? 'var(--color-text-faint)' : 'var(--color-primary)',
+                backgroundColor: loading
+                  ? 'var(--color-text-faint)'
+                  : 'var(--color-primary)',
                 color: '#0D0D0D',
                 cursor: loading ? 'not-allowed' : 'pointer'
               }}>

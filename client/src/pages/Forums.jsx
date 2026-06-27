@@ -1,3 +1,3 @@
-export default function PageName() {
-  return <div className="text-white p-8">PageName coming soon</div>
+export default function Forums() {
+  return <div className="text-white p-8">Forums coming soon</div>
 }

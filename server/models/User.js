@@ -154,27 +154,18 @@ const UserSchema = new mongoose.Schema({
   }],
 
   worlds: [{
-    type: String,
-    enum: [
-      'stem',
-      'arts_humanities',
-      'finance',
-      'law',
-      'business',
-      'medicine_health',
-      'education',
-      'creative',
-      'sports',
-      'gaming',
-      'faith_spirituality',
-      'politics_society',
-      'entertainment',
-      'food',
-      'travel',
-      'careers',
-      'kids',
-    ]
-  }],
+  type: String,
+  enum: [
+    'stem', 'arts_humanities', 'finance', 'law', 'business',
+    'medicine_health', 'education', 'careers', 'creative',
+    'music', 'movies', 'anime', 'entertainment', 'books',
+    'photography', 'design', 'fashion', 'beauty', 'food',
+    'travel', 'sports', 'fitness', 'gaming', 'pets', 'nature',
+    'home', 'faith_spirituality', 'mental_health', 'philosophy',
+    'politics_society', 'technology', 'ai_ml', 'crypto_web3', 'space'
+  ]
+}],
+
   careerProfile: {
     sector: { type: String, default: '' },
     role: { type: String, default: '' },
