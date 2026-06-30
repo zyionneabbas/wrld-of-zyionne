@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import axios from 'axios'
+import { connectSocket, disconnectSocket } from '../utils/socket'
 
 const AuthContext = createContext()
 
@@ -18,6 +19,15 @@ export const AuthProvider = ({ children }) => {
       setLoading(false)
     }
   }, [token])
+
+  useEffect(() => {
+    if (user?.id) {
+      connectSocket(user.id)
+    }
+    return () => {
+      if (!user) disconnectSocket()
+    }
+  }, [user])
 
   const fetchCurrentUser = async () => {
     try {
@@ -54,6 +64,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   const logout = () => {
+    disconnectSocket()
     localStorage.removeItem('wrldToken')
     delete axios.defaults.headers.common['Authorization']
     setToken(null)
@@ -66,13 +77,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{
-      user,
-      loading,
-      token,
-      login,
-      register,
-      logout,
-      updateUser
+      user, loading, token, login, register, logout, updateUser
     }}>
       {children}
     </AuthContext.Provider>
