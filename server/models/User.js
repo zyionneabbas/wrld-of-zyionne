@@ -37,35 +37,35 @@ const UserSchema = new mongoose.Schema({
     default: ''
   },
   appearance: {
-   mode: {
+    mode: {
       type: String,
-     enum: ['light', 'dark'],
-     default: 'dark'
+      enum: ['light', 'dark'],
+      default: 'dark'
     },
     primaryColor: {
       type: String,
       default: '#FFD700'
     },
-   backgroundColor: {
+    backgroundColor: {
       type: String,
-     default: '#0D0D0D'
+      default: '#0D0D0D'
     },
     accentColor: {
       type: String,
       default: '#FFD700'
-   },
-   font: {
-      type: String,
-     default: 'Montserrat'   // ← confirm this is here
     },
-   typingFont: {
+    font: {
       type: String,
-     default: 'Montserrat'   // ← and this
-   },
+      default: 'Montserrat'
+    },
+    typingFont: {
+      type: String,
+      default: 'Montserrat'
+    },
     customFontUrl: {
       type: String,
-     default: ''
-   }
+      default: ''
+    }
   },
   verified: {
     type: Boolean,
@@ -93,6 +93,10 @@ const UserSchema = new mongoose.Schema({
       type: String,
       enum: ['pending', 'accepted', 'blocked'],
       default: 'pending'
+    },
+    initiatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
     },
     initiatedAt: {
       type: Date,
@@ -147,25 +151,23 @@ const UserSchema = new mongoose.Schema({
       type: Date
     }
   }],
-  analytics: [{
+  analytics: {
     totalImpressions: { type: Number, default: 0 },
     totalReach: { type: Number, default: 0 },
     totalProfileVisits: { type: Number, default: 0 }
-  }],
-
+  },
   worlds: [{
-  type: String,
-  enum: [
-    'stem', 'arts_humanities', 'finance', 'law', 'business',
-    'medicine_health', 'education', 'careers', 'creative',
-    'music', 'movies', 'anime', 'entertainment', 'books',
-    'photography', 'design', 'fashion', 'beauty', 'food',
-    'travel', 'sports', 'fitness', 'gaming', 'pets', 'nature',
-    'home', 'faith_spirituality', 'mental_health', 'philosophy',
-    'politics_society', 'technology', 'ai_ml', 'crypto_web3', 'space'
-  ]
-}],
-
+    type: String,
+    enum: [
+      'stem', 'arts_humanities', 'finance', 'law', 'business',
+      'medicine_health', 'education', 'careers', 'creative',
+      'music', 'movies', 'anime', 'entertainment', 'books',
+      'photography', 'design', 'fashion', 'beauty', 'food',
+      'travel', 'sports', 'fitness', 'gaming', 'pets', 'nature',
+      'home', 'faith_spirituality', 'mental_health', 'philosophy',
+      'politics_society', 'technology', 'ai_ml', 'crypto_web3', 'space'
+    ]
+  }],
   careerProfile: {
     sector: { type: String, default: '' },
     role: { type: String, default: '' },
@@ -181,11 +183,13 @@ const UserSchema = new mongoose.Schema({
         'entrepreneur',
         'not_sure'
       ],
-    default: 'not_sure'
+      default: 'not_sure'
+    },
+    skills: [{ type: String }],
+    open_to_opportunities: { type: Boolean, default: false }
   },
-
   purpose: [{
-   type: String,
+    type: String,
     enum: [
       'just_having_fun',
       'building_career',
@@ -193,7 +197,7 @@ const UserSchema = new mongoose.Schema({
       'networking',
       'building_business',
       'creating_content',
-     'finding_community',
+      'finding_community',
       'dating',
       'shopping',
       'staying_informed',
@@ -202,13 +206,10 @@ const UserSchema = new mongoose.Schema({
       'finding_work',
       'mentoring_others',
       'being_mentored',
-     'exploring'
+      'exploring'
     ]
   }],
-  skills: [{ type: String }],
-  open_to_opportunities: { type: Boolean, default: false }
-},
-interests: [{ type: String }],
+  interests: [{ type: String }]
 }, { timestamps: true })
 
 module.exports = mongoose.model('User', UserSchema)

@@ -10,22 +10,22 @@ router.get('/:username', auth, async (req, res) => {
     const user = await User.findOne({ username: req.params.username })
       .select('-password')
       .populate('followers', 'username displayName avatar verified')
-      .populate('following', 'username displayName avatar verified');
+      .populate('following', 'username displayName avatar verified')
 
-    if (!user) return res.status(404).json({ error: 'User not found' });
+    if (!user) return res.status(404).json({ error: 'User not found' })
 
     const posts = await Post.find({
       author: user._id,
       isArchived: false
     })
       .populate('author', 'username displayName avatar verified')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
 
-    res.json({ user, posts });
+    res.json({ user, posts })
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: err.message })
   }
-});
+})
 
 // FOLLOW / UNFOLLOW
 router.patch('/:id/follow', auth, async (req, res) => {

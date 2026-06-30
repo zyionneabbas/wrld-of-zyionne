@@ -19,6 +19,7 @@ export default function MainLayout() {
     { path: '/communities', label: 'Communities', icon: '⬡' },
     { path: '/messages', label: 'Messages', icon: '✉' },
     { path: '/notifications', label: 'Notifications', icon: '🔔' },
+    { path: '/friends', label: 'Friends', icon: '🤝' },
   ]
 
   const navLinkStyle = ({ isActive }) => ({

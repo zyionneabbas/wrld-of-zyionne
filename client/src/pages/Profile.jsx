@@ -27,7 +27,7 @@ export default function Profile() {
       setProfile(res.data.user)
       setPosts(res.data.posts)
       setFollowing(
-        res.data.user.followers?.some(f => f._id === currentUser?.id)
+        res.data.user.followers?.some(f => f._id?.toString() === currentUser?.id?.toString())
       )
     } catch (err) {
       console.error(err)
@@ -45,6 +45,7 @@ export default function Profile() {
       console.error(err)
     }
   }
+
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-screen">

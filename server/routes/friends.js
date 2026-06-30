@@ -4,51 +4,44 @@ const User = require('../models/User')
 const auth = require('../middleware/auth')
 const { getIO } = require('../socket')
 
+
 // SEND friend request via Friend ID
 router.post('/request', auth, async (req, res) => {
   try {
     const { friendId } = req.body
-
     const targetUser = await User.findOne({ friendId })
     if (!targetUser) {
       return res.status(404).json({ error: 'No user found with that Friend ID' })
     }
-
     if (targetUser._id.toString() === req.user.id) {
       return res.status(400).json({ error: 'You cannot add yourself' })
     }
 
-    // Check if already friends or pending
     const currentUser = await User.findById(req.user.id)
-
     const alreadyFriends = currentUser.friends.some(
       f => f.user.toString() === targetUser._id.toString()
     )
-
     if (alreadyFriends) {
       return res.status(400).json({ error: 'Friend request already sent or already friends' })
     }
-
-    // Check if blocked
     if (targetUser.blockedUsers.includes(req.user.id)) {
       return res.status(403).json({ error: 'Unable to send friend request' })
     }
 
-    // Add pending to both users
     currentUser.friends.push({
       user: targetUser._id,
-      status: 'pending'
+      status: 'pending',
+      initiatedBy: req.user.id
     })
-
     targetUser.friends.push({
       user: req.user.id,
-      status: 'pending'
+      status: 'pending',
+      initiatedBy: req.user.id
     })
 
     await currentUser.save()
     await targetUser.save()
 
-    // Notify target user via Socket.io
     const io = getIO()
     io.to(targetUser._id.toString()).emit('friendRequest', {
       from: {
@@ -77,7 +70,6 @@ router.patch('/accept', auth, async (req, res) => {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    // Update status to accepted for both
     const currentFriend = currentUser.friends.find(
       f => f.user.toString() === userId
     )
@@ -92,10 +84,23 @@ router.patch('/accept', auth, async (req, res) => {
     currentFriend.status = 'accepted'
     requestingFriend.status = 'accepted'
 
+    // Auto-follow each other since they're now friends
+    if (!currentUser.following.includes(userId)) {
+      currentUser.following.push(userId)
+    }
+    if (!requestingUser.followers.includes(req.user.id)) {
+      requestingUser.followers.push(req.user.id)
+    }
+    if (!requestingUser.following.includes(req.user.id)) {
+      requestingUser.following.push(req.user.id)
+    }
+    if (!currentUser.followers.includes(userId)) {
+      currentUser.followers.push(userId)
+    }
+
     await currentUser.save()
     await requestingUser.save()
 
-    // Notify via Socket.io
     const io = getIO()
     io.to(userId).emit('friendRequestAccepted', {
       by: {
@@ -167,14 +172,18 @@ router.get('/', auth, async (req, res) => {
       .populate('friends.user', 'username displayName avatar verified friendId')
 
     const accepted = user.friends.filter(f => f.status === 'accepted')
-    const pending = user.friends.filter(f => f.status === 'pending')
+    const incomingPending = user.friends.filter(
+      f => f.status === 'pending' && f.initiatedBy.toString() !== req.user.id
+    )
+    const outgoingPending = user.friends.filter(
+      f => f.status === 'pending' && f.initiatedBy.toString() === req.user.id
+    )
 
-    res.json({ accepted, pending })
+    res.json({ accepted, pending: incomingPending, sent: outgoingPending })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
 })
-
 // GET your own Friend ID
 router.get('/my-id', auth, async (req, res) => {
   try {
