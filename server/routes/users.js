@@ -42,7 +42,6 @@ router.patch('/:id/follow', auth, async (req, res) => {
     const isFollowing = currentUser.following.includes(req.params.id)
 
     if (isFollowing) {
-      // Unfollow
       currentUser.following = currentUser.following.filter(
         id => id.toString() !== req.params.id
       )
@@ -50,7 +49,6 @@ router.patch('/:id/follow', auth, async (req, res) => {
         id => id.toString() !== req.user.id
       )
     } else {
-      // Follow
       currentUser.following.push(req.params.id)
       userToFollow.followers.push(req.user.id)
     }
@@ -64,9 +62,11 @@ router.patch('/:id/follow', auth, async (req, res) => {
       followingCount: currentUser.following.length
     })
   } catch (err) {
+    console.error('FOLLOW ERROR:', err.message)
+    console.error('FOLLOW STACK:', err.stack)
     res.status(500).json({ error: err.message })
   }
-});
+})
 
 // SEARCH users
 router.get('/search/users', auth, async (req, res) => {

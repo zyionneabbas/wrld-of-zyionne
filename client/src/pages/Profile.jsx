@@ -13,12 +13,19 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const [following, setFollowing] = useState(false)
   const [activeTab, setActiveTab] = useState('grid')
+  const [showFollowMenu, setShowFollowMenu] = useState(false)
 
   const isOwnProfile = currentUser?.username === username
 
   useEffect(() => {
     fetchProfile()
   }, [username])
+
+  useEffect(() => {
+    const handleClickOutside = () => setShowFollowMenu(false)
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [])
 
   const fetchProfile = async () => {
     setLoading(true)
@@ -27,13 +34,24 @@ export default function Profile() {
       setProfile(res.data.user)
       setPosts(res.data.posts)
       setFollowing(
-        res.data.user.followers?.some(f => f._id?.toString() === currentUser?.id?.toString())
+        res.data.user.followers?.some(f => {
+          const followerId = (f._id || f)?.toString()
+          const myId = (currentUser?.id || currentUser?._id)?.toString()
+          return followerId === myId
+        })
       )
     } catch (err) {
       console.error(err)
     } finally {
       setLoading(false)
     }
+    const res = await axios.get(`${API}/api/users/${username}`)
+    console.log('am I following?', res.data.user.followers?.some(
+    f => (f._id || f)?.toString() === currentUser?.id?.toString()
+    ))
+    console.log('followers list:', res.data.user.followers)
+    console.log('my id:', currentUser?.id)
+  
   }
 
   const handleFollow = async () => {
@@ -116,23 +134,81 @@ export default function Profile() {
 
           {/* Action button */}
           {!isOwnProfile && (
+            <div className="relative">
+            {following ? (
+            <div className="relative">
             <button
-              onClick={handleFollow}
-              className="px-5 py-2 rounded-full text-sm font-bold transition-all"
-              style={{
-                backgroundColor: following
-                  ? 'transparent'
-                  : 'var(--color-primary)',
-                color: following ? 'var(--color-text)' : '#0D0D0D',
-                border: following
-                  ? '1px solid var(--color-border)'
-                  : 'none',
-                cursor: 'pointer'
-              }}>
-              {following ? 'Following' : 'Follow'}
-            </button>
-          )}
+             onClick={(e) => {
+            e.stopPropagation()
+            setShowFollowMenu(prev => !prev)
+            }}
+            className="flex items-center gap-1 px-5 py-2 rounded-full text-sm font-bold transition-all"
+            style={{
+              backgroundColor: 'transparent',
+              border: '1px solid var(--color-border)',
+              color: 'var(--color-text)',
+              cursor: 'pointer'
+          }}>
+          Following ▾
+        </button>
 
+          {showFollowMenu && (
+            <div className="absolute top-10 left-0 rounded-xl overflow-hidden z-20 min-w-44"
+              style={{
+                backgroundColor: 'var(--color-bg-elevated)',
+                border: '1px solid var(--color-border)',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.4)'
+              }}>
+              {[
+                { label: '⭐ Add to Favourites', action: () => {} },
+                { label: '👥 Add to Close Friends', action: () => {} },
+                { label: '🔇 Mute', action: () => {} },
+                { label: '⚠️ Restrict', action: () => {} },
+                {
+                  label: 'Unfollow',
+                  action: handleFollow,
+                  danger: true
+                },
+              ].map(item => (
+                <button
+                  key={item.label}
+                  onClick={() => {
+                    item.action()
+                    setShowFollowMenu(false)
+                  }}
+                  className="w-full text-left px-4 py-3 text-sm transition-all"
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    color: item.danger ? '#ff5050' : 'var(--color-text)',
+                    cursor: 'pointer',
+                    borderBottom: '1px solid var(--color-border)'
+                  }}
+                  onMouseEnter={e =>
+                    e.currentTarget.style.backgroundColor = 'var(--color-bg-surface)'}
+                  onMouseLeave={e =>
+                    e.currentTarget.style.backgroundColor = 'transparent'}>
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <button
+          onClick={handleFollow}
+          className="px-5 py-2 rounded-full text-sm font-bold transition-all"
+          style={{
+            backgroundColor: 'var(--color-primary)',
+            color: '#0D0D0D',
+            border: 'none',
+            cursor: 'pointer'
+          }}>
+        Follow
+      </button>
+      )}
+    </div>
+  )}
           {isOwnProfile && (
             <button
               className="px-5 py-2 rounded-full text-sm font-bold transition-all"

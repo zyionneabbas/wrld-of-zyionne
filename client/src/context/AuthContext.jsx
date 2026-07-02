@@ -30,15 +30,16 @@ export const AuthProvider = ({ children }) => {
   }, [user])
 
   const fetchCurrentUser = async () => {
-    try {
-      const res = await axios.get(`${API}/api/auth/me`)
-      setUser(res.data)
-    } catch (err) {
-      logout()
-    } finally {
-      setLoading(false)
-    }
+  try {
+    const res = await axios.get(`${API}/api/auth/me`)
+    const userData = res.data
+    setUser({ ...userData, id: userData.id || userData._id })
+  } catch (err) {
+    logout()
+  } finally {
+    setLoading(false)
   }
+}
 
   const login = async (emailOrUsername, password) => {
     const res = await axios.post(`${API}/api/auth/login`, {
@@ -49,17 +50,22 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('wrldToken', token)
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
     setToken(token)
-    setUser(user)
+    // Make sure id is always available
+    setUser({ ...user, id: user.id || user._id })
     return user
   }
 
   const register = async (userData) => {
-    const res = await axios.post(`${API}/api/auth/register`, userData)
+    const res = await axios.post(`${API}/api/auth/register`, {
+    emailOrUsername,
+    password
+  })
     const { token, user } = res.data
     localStorage.setItem('wrldToken', token)
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
     setToken(token)
-    setUser(user)
+    // Make sure id is always available
+    setUser({ ...user, id: user.id || user._id })
     return user
   }
 
