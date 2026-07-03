@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
@@ -14,6 +15,7 @@ export default function Profile() {
   const [following, setFollowing] = useState(false)
   const [activeTab, setActiveTab] = useState('grid')
   const [showFollowMenu, setShowFollowMenu] = useState(false)
+  const navigate = useNavigate()
 
   const isOwnProfile = currentUser?.username === username
 
@@ -211,6 +213,7 @@ export default function Profile() {
   )}
           {isOwnProfile && (
             <button
+              onClick={() => navigate('/settings')}
               className="px-5 py-2 rounded-full text-sm font-bold transition-all"
               style={{
                 backgroundColor: 'transparent',
@@ -218,9 +221,9 @@ export default function Profile() {
                 color: 'var(--color-text)',
                 cursor: 'pointer'
               }}>
-              Edit Profile
-            </button>
-          )}
+            Edit Profile
+          </button>
+        )}
         </div>
       </div>
 

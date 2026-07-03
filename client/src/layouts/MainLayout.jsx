@@ -20,6 +20,7 @@ export default function MainLayout() {
     { path: '/messages', label: 'Messages', icon: '✉' },
     { path: '/notifications', label: 'Notifications', icon: '🔔' },
     { path: '/friends', label: 'Friends', icon: '🤝' },
+    { path: '/settings', label: 'Settings', icon: '⚙' },
   ]
 
   const navLinkStyle = ({ isActive }) => ({

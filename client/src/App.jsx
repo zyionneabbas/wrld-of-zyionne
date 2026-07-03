@@ -25,6 +25,9 @@ import Friends from './pages/Friends'
 // Loading
 import Splash from './pages/Splash'
 
+//Editing
+import Settings from './pages/Settings'
+
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
   if (loading) return <Splash />
@@ -57,6 +60,7 @@ function App() {
         <Route path="stories" element={<Stories />} />
         <Route path="profile/:username" element={<Profile />} />
         <Route path="friends" element={<Friends />} />
+        <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>
   )
