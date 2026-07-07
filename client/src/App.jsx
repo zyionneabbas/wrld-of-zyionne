@@ -21,6 +21,7 @@ import Forums from './pages/Forums'
 import Communities from './pages/Communities'
 import Stories from './pages/Stories'
 import Friends from './pages/Friends'
+import ArticleDetail from './pages/ArticleDetail'
 
 // Loading
 import Splash from './pages/Splash'
@@ -61,6 +62,7 @@ function App() {
         <Route path="profile/:username" element={<Profile />} />
         <Route path="friends" element={<Friends />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="articles/:slug" element={<ArticleDetail />} />
       </Route>
     </Routes>
   )
