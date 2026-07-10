@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import CreatePost from '../components/CreatePost'
+import StoriesBar from '../components/StoriesBar'
 
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3000'
@@ -49,6 +50,7 @@ export default function Feed() {
     </div>
 
     {/* Create post */}
+    <StoriesBar />
     <CreatePost onSuccess={fetchFeed} />
 
     {/* Posts or empty state */}

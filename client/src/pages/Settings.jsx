@@ -55,6 +55,25 @@ const WORLDS = [
   { id: 'space', label: 'Space & Astronomy', emoji: '🪐' },
 ]
 
+const FONTS = [
+  { id: 'Montserrat', label: 'Montserrat' },
+  { id: 'Inter', label: 'Inter' },
+  { id: 'Poppins', label: 'Poppins' },
+  { id: 'Work Sans', label: 'Work Sans' },
+  { id: 'Nunito', label: 'Nunito' },
+  { id: 'Raleway', label: 'Raleway' },
+  { id: 'Quicksand', label: 'Quicksand' },
+  { id: 'Comfortaa', label: 'Comfortaa' },
+  { id: 'Playfair Display', label: 'Playfair Display' },
+  { id: 'DM Serif Display', label: 'DM Serif Display' },
+  { id: 'Merriweather', label: 'Merriweather' },
+  { id: 'Roboto Slab', label: 'Roboto Slab' },
+  { id: 'Space Mono', label: 'Space Mono' },
+  { id: 'Fira Code', label: 'Fira Code' },
+  { id: 'Bebas Neue', label: 'Bebas Neue' },
+  { id: 'Caveat', label: 'Caveat (Handwritten)' },
+]
+
 export default function Settings() {
   const { user, updateUser, logout } = useAuth()
   const navigate = useNavigate()
@@ -117,7 +136,7 @@ export default function Settings() {
     setSaving(true)
     try {
       await axios.patch(`${API}/api/users/profile/appearance`, appearance)
-      updateUser({ appearance })
+      updateUser({ appearance: { ...user.appearance, ...appearance } })
       showSaved()
     } catch (err) {
       console.error(err)
@@ -236,7 +255,6 @@ export default function Settings() {
               Edit Profile
             </h2>
 
-            {/* Avatar placeholder */}
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold"
                 style={{
@@ -438,7 +456,6 @@ export default function Settings() {
               Appearance
             </h2>
 
-            {/* Mode toggle */}
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold tracking-widest uppercase"
                 style={{ color: 'var(--color-text-muted)' }}>
@@ -468,7 +485,6 @@ export default function Settings() {
               </div>
             </div>
 
-            {/* Primary color */}
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold tracking-widest uppercase"
                 style={{ color: 'var(--color-text-muted)' }}>
@@ -504,7 +520,6 @@ export default function Settings() {
               </div>
             </div>
 
-            {/* Background color */}
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold tracking-widest uppercase"
                 style={{ color: 'var(--color-text-muted)' }}>
@@ -527,25 +542,19 @@ export default function Settings() {
               </div>
             </div>
 
-            {/* Font */}
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold tracking-widest uppercase"
                 style={{ color: 'var(--color-text-muted)' }}>
                 Font
               </label>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { id: 'Montserrat', label: 'Montserrat' },
-                  { id: 'serif', label: 'Serif' },
-                  { id: 'Space Mono', label: 'Mono' },
-                  { id: 'cursive', label: 'Handwritten' },
-                ].map(font => (
+              <div className="grid grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1">
+                {FONTS.map(font => (
                   <button
                     key={font.id}
                     onClick={() => setAppearance({ ...appearance, font: font.id })}
-                    className="py-3 rounded-xl text-sm font-semibold transition-all"
+                    className="py-3 px-2 rounded-xl text-sm font-semibold transition-all text-center"
                     style={{
-                      fontFamily: font.id,
+                      fontFamily: `'${font.id}', sans-serif`,
                       backgroundColor: appearance.font === font.id
                         ? 'rgba(255,215,0,0.1)'
                         : 'var(--color-bg-surface)',

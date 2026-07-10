@@ -19,7 +19,7 @@ import Notifications from './pages/Notifications'
 import Articles from './pages/Articles'
 import Forums from './pages/Forums'
 import Communities from './pages/Communities'
-import Stories from './pages/Stories'
+import Stories from './components/StoriesBar'
 import Friends from './pages/Friends'
 import ArticleDetail from './pages/ArticleDetail'
 
