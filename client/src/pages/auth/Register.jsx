@@ -132,7 +132,7 @@ export default function Register() {
               <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
                 style={{
                   backgroundColor: 'var(--color-primary)',
-                  color: '#0D0D0D'
+                    color: 'var(--color-primary-text)'
                 }}>
                 1
               </div>
@@ -267,7 +267,7 @@ export default function Register() {
                 className="w-full py-3 rounded-xl font-bold text-sm tracking-widest uppercase transition-all mt-2"
                 style={{
                   backgroundColor: 'var(--color-primary)',
-                  color: '#0D0D0D',
+                    color: 'var(--color-primary-text)',
                   cursor: 'pointer'
                 }}>
                 Continue
@@ -336,7 +336,7 @@ export default function Register() {
                     backgroundColor: loading
                       ? 'var(--color-text-faint)'
                       : 'var(--color-primary)',
-                    color: '#0D0D0D',
+                      color: 'var(--color-primary-text)',
                     cursor: loading ? 'not-allowed' : 'pointer'
                   }}>
                   {loading ? 'Creating...' : 'Join WRLD'}

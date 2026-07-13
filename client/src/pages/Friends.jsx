@@ -133,7 +133,7 @@ export default function Friends() {
             className="px-4 py-2.5 rounded-xl text-sm font-bold"
             style={{
               backgroundColor: 'var(--color-primary)',
-              color: '#0D0D0D',
+                color: 'var(--color-primary-text)',
               border: 'none',
               cursor: 'pointer'
             }}>
@@ -231,7 +231,7 @@ export default function Friends() {
                   className="px-3 py-1.5 rounded-full text-xs font-bold"
                   style={{
                     backgroundColor: 'var(--color-primary)',
-                    color: '#0D0D0D',
+                      color: 'var(--color-primary-text)',
                     border: 'none',
                     cursor: 'pointer'
                   }}>

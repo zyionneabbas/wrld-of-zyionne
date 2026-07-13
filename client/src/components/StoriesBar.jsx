@@ -200,7 +200,7 @@ function UploadStoryModal({ onClose, onSuccess }) {
               className="w-full py-3 rounded-xl text-sm font-bold"
               style={{
                 backgroundColor: 'var(--color-primary)',
-                color: '#0D0D0D',
+                  color: 'var(--color-primary-text)',
                 border: 'none',
                 cursor: 'pointer'
               }}>

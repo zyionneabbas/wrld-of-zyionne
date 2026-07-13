@@ -206,7 +206,7 @@ export default function Explore() {
                   className="px-3 py-1.5 rounded-full text-xs font-bold transition-all"
                   style={{
                     backgroundColor: 'var(--color-primary)',
-                    color: '#0D0D0D',
+                      color: 'var(--color-primary-text)',
                     border: 'none',
                     cursor: 'pointer'
                   }}>
@@ -259,7 +259,7 @@ export default function Explore() {
                       className="px-3 py-1.5 rounded-full text-xs font-bold"
                       style={{
                         backgroundColor: 'var(--color-primary)',
-                        color: '#0D0D0D',
+                          color: 'var(--color-primary-text)',
                         border: 'none',
                         cursor: 'pointer'
                       }}>

@@ -89,6 +89,34 @@ router.get('/search/users', auth, async (req, res) => {
   }
 });
 
+router.patch('/profile/appearance', auth, async (req, res) => {
+  try {
+    const { mode, primaryColor, backgroundColor, accentColor, font, typingFont } = req.body
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        appearance: {
+          ...(mode && { mode }),
+          ...(primaryColor && { primaryColor }),
+          ...(backgroundColor && { backgroundColor }),
+          ...(accentColor && { accentColor }),
+          ...(font && { font }),
+          ...(typingFont && { typingFont })
+        }
+      },
+      { new: true }
+    ).select('appearance')
+
+    res.json({
+      message: 'Your WRLD now looks exactly how you want it',
+      appearance: user.appearance
+    })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 // UPDATE profile
 router.patch('/profile/update', auth, async (req, res) => {
   try {

@@ -226,7 +226,7 @@ export default function Onboarding() {
                 className="flex-1 py-3 rounded-xl text-sm font-bold tracking-widest uppercase"
                 style={{
                   backgroundColor: 'var(--color-primary)',
-                  color: '#0D0D0D',
+                    color: 'var(--color-primary-text)',
                   cursor: 'pointer'
                 }}>
                 Continue
@@ -281,7 +281,7 @@ export default function Onboarding() {
                 className="flex-1 py-3 rounded-xl text-sm font-bold tracking-widest uppercase"
                 style={{
                   backgroundColor: 'var(--color-primary)',
-                  color: '#0D0D0D',
+                    color: 'var(--color-primary-text)',
                   cursor: 'pointer'
                 }}>
                 Continue
@@ -415,7 +415,7 @@ export default function Onboarding() {
                   backgroundColor: loading
                     ? 'var(--color-text-faint)'
                     : 'var(--color-primary)',
-                  color: '#0D0D0D',
+                    color: 'var(--color-primary-text)',
                   cursor: loading ? 'not-allowed' : 'pointer'
                 }}>
                 {loading ? 'Setting up...' : 'Enter WRLD 🌍'}
