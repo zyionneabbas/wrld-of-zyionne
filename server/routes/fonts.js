@@ -111,13 +111,15 @@ router.patch('/:id/publish', auth, async (req, res) => {
     // Compile the SVG glyphs into a real font
     const compiledFont = compileFontFromGlyphs(font.name, font.glyphs)
 
-    // Write to a temp file
+    // Get the font as a binary buffer (Node-compatible, no browser download)
+    const arrayBuffer = compiledFont.toArrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+
+    // Write buffer to a temp file
     const tempPath = path.join(os.tmpdir(), `${font._id}.otf`)
-    compiledFont.download(tempPath)
+    fs.writeFileSync(tempPath, buffer)
 
-    // Wait briefly for file write, then upload to Cloudinary
-    await new Promise(resolve => setTimeout(resolve, 300))
-
+    // Upload to Cloudinary
     const uploadResult = await cloudinary.uploader.upload(tempPath, {
       folder: 'wrld-of-zyionne/fonts',
       resource_type: 'raw',
@@ -137,11 +139,12 @@ router.patch('/:id/publish', auth, async (req, res) => {
       message: 'Font compiled and published to WRLD',
       font
     })
-  } catch (err) {
-    console.error('Font compilation error:', err.message)
-    res.status(500).json({ error: 'Failed to compile font: ' + err.message })
-  }
-})
+  }  catch (err) {
+  console.error('FULL ERROR OBJECT:', err)
+  console.error('Font compilation error:', err?.message)
+  res.status(500).json({ error: 'Failed to compile font: ' + (err?.message || 'unknown error') })
+}
+  })
 
 // GET all public fonts
 router.get('/', auth, async (req, res) => {
