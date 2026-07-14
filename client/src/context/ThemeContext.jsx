@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect } from 'react'
 import { useAuth } from './AuthContext'
 import { generatePalette, getContrastText } from '../utils/colorUtils'
 
+
 const ThemeContext = createContext()
 
 export const ThemeProvider = ({ children }) => {
