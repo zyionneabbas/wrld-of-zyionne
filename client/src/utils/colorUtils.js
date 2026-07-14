@@ -74,14 +74,14 @@ export function generatePalette(baseBg, mode) {
   return {
     bg: baseBg,
     bgCard: adjustLightness(baseBg, isDarkBase ? 6 : -6),
-    bgSurface: adjustLightness(baseBg, isDarkBase ? 10 : -10),
-    bgElevated: adjustLightness(baseBg, isDarkBase ? 16 : -16),
+    bgSurface: adjustLightness(baseBg, isDarkBase ? 14 : -14),
+    bgElevated: adjustLightness(baseBg, isDarkBase ? 20 : -20),
     text: getContrastText(baseBg),
     textMuted: isDarkBase
-      ? adjustLightness(getContrastText(baseBg), -30)
-      : adjustLightness(getContrastText(baseBg), 30),
+      ? adjustLightness(getContrastText(baseBg), -15)
+      : adjustLightness(getContrastText(baseBg), 15),
     border: getContrastText(baseBg) === '#F5F5F5'
-      ? 'rgba(255,255,255,0.15)'
-      : 'rgba(0,0,0,0.15)'
+      ? 'rgba(255,255,255,0.2)'
+      : 'rgba(0,0,0,0.2)'
   }
 }

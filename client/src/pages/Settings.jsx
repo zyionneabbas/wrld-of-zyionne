@@ -171,10 +171,10 @@ export default function Settings() {
   ]
 
   const inputStyle = {
-    backgroundColor: 'var(--color-bg-surface)',
-    border: '1px solid var(--color-border)',
-    color: 'var(--color-text)',
-    fontFamily: 'var(--font-primary)'
+  backgroundColor: 'var(--color-bg-surface)',
+  border: '1.5px solid var(--color-border)',
+  color: 'var(--color-text)',
+  fontFamily: 'var(--font-primary)'
   }
 
   return (
