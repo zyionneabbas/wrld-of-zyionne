@@ -541,6 +541,17 @@ export default function Settings() {
                 </span>
               </div>
             </div>
+              <button
+                onClick={() => navigate('/font-maker')}
+                className="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
+                style={{
+                  backgroundColor: 'rgba(255,215,0,0.08)',
+                  border: '1px solid rgba(255,215,0,0.3)',
+                  color: 'var(--color-primary)',
+                  cursor: 'pointer'
+                }}>
+                ✍️ Draw Your Own Font
+              </button>
 
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold tracking-widest uppercase"
