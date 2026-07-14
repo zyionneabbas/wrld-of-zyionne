@@ -4,7 +4,11 @@ const CustomFont = require('../models/CustomFont')
 const { WRLD_CHARACTER_SET } = require('../models/CustomFont')
 const User = require('../models/User')
 const auth = require('../middleware/auth')
-const { upload } = require('../config/cloudinary')
+const { upload, cloudinary } = require('../config/cloudinary')
+const { compileFontFromGlyphs } = require('../utils/fontCompiler')
+const fs = require('fs')
+const os = require('os')
+const path = require('path')
 
 // GET the full character set for the font maker
 router.get('/character-set', auth, async (req, res) => {
@@ -90,8 +94,8 @@ router.get('/:id', auth, async (req, res) => {
   }
 })
 
-// PUBLISH a font
-router.patch('/:id/publish', auth, upload.single('fontFile'), async (req, res) => {
+// PUBLISH a font — compiles glyphs into a real font file
+router.patch('/:id/publish', auth, async (req, res) => {
   try {
     const font = await CustomFont.findById(req.params.id)
     if (!font) return res.status(404).json({ error: 'Font not found' })
@@ -100,14 +104,42 @@ router.patch('/:id/publish', auth, upload.single('fontFile'), async (req, res) =
       return res.status(403).json({ error: 'Not authorized' })
     }
 
+    if (!font.glyphs || font.glyphs.length === 0) {
+      return res.status(400).json({ error: 'Draw at least one character before publishing' })
+    }
+
+    // Compile the SVG glyphs into a real font
+    const compiledFont = compileFontFromGlyphs(font.name, font.glyphs)
+
+    // Write to a temp file
+    const tempPath = path.join(os.tmpdir(), `${font._id}.otf`)
+    compiledFont.download(tempPath)
+
+    // Wait briefly for file write, then upload to Cloudinary
+    await new Promise(resolve => setTimeout(resolve, 300))
+
+    const uploadResult = await cloudinary.uploader.upload(tempPath, {
+      folder: 'wrld-of-zyionne/fonts',
+      resource_type: 'raw',
+      public_id: `${font.name.replace(/\s+/g, '_')}_${font._id}`
+    })
+
+    // Clean up temp file
+    fs.unlink(tempPath, () => {})
+
     font.status = 'published'
     font.isPublic = true
-    if (req.file) font.fontFileUrl = req.file.path
+    font.fontFileUrl = uploadResult.secure_url
 
     await font.save()
-    res.json({ message: 'Font published to WRLD', font })
+
+    res.json({
+      message: 'Font compiled and published to WRLD',
+      font
+    })
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Font compilation error:', err.message)
+    res.status(500).json({ error: 'Failed to compile font: ' + err.message })
   }
 })
 
@@ -156,14 +188,17 @@ router.patch('/:id/apply', auth, async (req, res) => {
     }
 
     await User.findByIdAndUpdate(req.user.id, {
-      'appearance.font': font.name,
+      'appearance.font': 'custom',
       'appearance.customFontUrl': font.fontFileUrl
     })
 
     font.downloads += 1
     await font.save()
 
-    res.json({ message: `Applied "${font.name}" to your WRLD` })
+    res.json({
+      message: `Applied "${font.name}" to your WRLD`,
+      fontFileUrl: font.fontFileUrl
+    })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
