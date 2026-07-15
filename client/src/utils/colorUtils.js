@@ -1,3 +1,5 @@
+export { hexToHsl, hslToHex }
+
 function hexToHsl(hex) {
   let { r, g, b } = hexToRgb(hex)
   r /= 255; g /= 255; b /= 255
@@ -83,5 +85,28 @@ export function generatePalette(baseBg, mode) {
     border: getContrastText(baseBg) === '#F5F5F5'
       ? 'rgba(255,255,255,0.2)'
       : 'rgba(0,0,0,0.2)'
+  }
+}
+
+// Adjusts a color to fit dark or light mode while preserving its hue identity
+export function adjustColorForMode(hex, mode) {
+  const { h, s, l } = hexToHsl(hex)
+
+  if (mode === 'light') {
+    if (l < 50) {
+      // Too dark for light mode — flip to a bright, vivid version of the same hue
+      const newL = Math.min(95, (100 - l) + 10)
+      const newS = Math.min(100, s + 10)
+      return hslToHex(h, newS, newL)
+    }
+    return hex // Already light — leave it exactly as chosen
+  } else {
+    if (l >= 50) {
+      // Too light for dark mode — flip to a deep, rich version of the same hue
+      const newL = Math.max(10, (100 - l) - 10)
+      const newS = Math.min(100, s + 10)
+      return hslToHex(h, newS, newL)
+    }
+    return hex // Already dark — leave it exactly as chosen
   }
 }

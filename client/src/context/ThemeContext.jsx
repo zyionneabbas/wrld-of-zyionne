@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect } from 'react'
 import { useAuth } from './AuthContext'
-import { generatePalette, getContrastText } from '../utils/colorUtils'
-
+import { generatePalette, getContrastText, adjustColorForMode } from '../utils/colorUtils'
 
 const ThemeContext = createContext()
 
@@ -17,23 +16,17 @@ export const ThemeProvider = ({ children }) => {
   // ... existing color logic stays the same ...
 
   // Handle custom drawn fonts
-  if (appearance.font === 'custom' && appearance.customFontUrl) {
-    const styleId = 'wrld-custom-font'
-    let styleTag = document.getElementById(styleId)
-    if (!styleTag) {
-      styleTag = document.createElement('style')
-      styleTag.id = styleId
-      document.head.appendChild(styleTag)
-    }
-    styleTag.textContent = `
-      @font-face {
-        font-family: 'WRLDCustomFont';
-        src: url('${appearance.customFontUrl}') format('opentype');
-      }
-    `
-    root.style.setProperty('--font-primary', "'WRLDCustomFont', sans-serif")
-  } else if (appearance.font) {
-    root.style.setProperty('--font-primary', `'${appearance.font}', sans-serif`)
+  if (appearance.backgroundColor) {
+  const effectiveBg = adjustColorForMode(appearance.backgroundColor, appearance.mode)
+  const palette = generatePalette(effectiveBg, appearance.mode)
+
+  root.style.setProperty('--color-bg', palette.bg)
+  root.style.setProperty('--color-bg-card', palette.bgCard)
+  root.style.setProperty('--color-bg-surface', palette.bgSurface)
+  root.style.setProperty('--color-bg-elevated', palette.bgElevated)
+  root.style.setProperty('--color-text', palette.text)
+  root.style.setProperty('--color-text-muted', palette.textMuted)
+  root.style.setProperty('--color-border', palette.border)
   }
 
 }, [user?.appearance])
