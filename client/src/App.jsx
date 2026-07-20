@@ -22,7 +22,6 @@ import Communities from './pages/Communities'
 import Stories from './components/StoriesBar'
 import Friends from './pages/Friends'
 import ArticleDetail from './pages/ArticleDetail'
-import FontMaker from './pages/FontMaker'
 
 // Loading
 import Splash from './pages/Splash'
@@ -64,7 +63,6 @@ function App() {
         <Route path="friends" element={<Friends />} />
         <Route path="settings" element={<Settings />} />
         <Route path="articles/:slug" element={<ArticleDetail />} />
-        <Route path="font-maker" element={<FontMaker />} />
       </Route>
     </Routes>
   )

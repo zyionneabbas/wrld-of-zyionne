@@ -177,32 +177,10 @@ export default function Settings() {
   fontFamily: 'var(--font-primary)'
   }
 
-  const [customFonts, setCustomFonts] = useState([])
-
 useEffect(() => {
   fetchMyFonts()
 }, [])
 
-const fetchMyFonts = async () => {
-  try {
-    const res = await axios.get(`${API}/api/fonts/me`)
-    setCustomFonts(res.data.filter(f => f.status === 'published'))
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-  const applyCustomFont = async (fontId) => {
-  try {
-    const res = await axios.patch(`${API}/api/fonts/${fontId}/apply`)
-    updateUser({
-      appearance: { ...user.appearance, font: 'custom', customFontUrl: res.data.fontFileUrl }
-    })
-    fetchMyFonts()
-  } catch (err) {
-    console.error(err)
-  }
-}
 
   return (
     <div className="flex min-h-screen">
@@ -568,43 +546,6 @@ const fetchMyFonts = async () => {
                 </span>
               </div>
             </div>
-              <button
-                onClick={() => navigate('/font-maker')}
-                className="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
-                style={{
-                  backgroundColor: 'rgba(255,215,0,0.08)',
-                  border: '1px solid rgba(255,215,0,0.3)',
-                  color: 'var(--color-primary)',
-                  cursor: 'pointer'
-                }}>
-                ✍️ Draw Your Own Font
-              </button>
-
-              {customFonts.length > 0 && (
-                <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold tracking-widest uppercase"
-                style={{ color: 'var(--color-text-muted)' }}>
-                Your Custom Fonts
-                </label>
-                <div className="flex flex-col gap-2">
-                {customFonts.map(font => (
-                <button
-                  key={font._id}
-                  onClick={() => applyCustomFont(font._id)}
-                  className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold"
-                  style={{
-                  backgroundColor: 'var(--color-bg-surface)',
-                  border: '1.5px solid var(--color-border)',
-                  color: 'var(--color-text)',
-                  cursor: 'pointer'
-                }}>
-              <span>✍️ {font.name}</span>
-              <span style={{ color: 'var(--color-primary)', fontSize: '12px' }}>Apply</span>
-              </button>
-            ))}
-             </div>
-             </div>
-            )}
 
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold tracking-widest uppercase"
