@@ -22,6 +22,8 @@ import Communities from './pages/Communities'
 import Stories from './components/StoriesBar'
 import Friends from './pages/Friends'
 import ArticleDetail from './pages/ArticleDetail'
+import ParentCreateChild from './pages/littleWRLD/ParentCreateChild'
+import ChildLogin from './pages/littleWRLD/ChildLogin'
 
 // Loading
 import Splash from './pages/Splash'
@@ -63,6 +65,8 @@ function App() {
         <Route path="friends" element={<Friends />} />
         <Route path="settings" element={<Settings />} />
         <Route path="articles/:slug" element={<ArticleDetail />} />
+        <Route path="/little-wrld/login" element={<ChildLogin />} />
+        <Route path="little-wrld/create" element={<ParentCreateChild />} />
       </Route>
     </Routes>
   )

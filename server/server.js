@@ -23,7 +23,6 @@ const moderationRoutes = require('./routes/moderation')
 const archiveRoutes = require('./routes/archive')
 const articleRoutes = require('./routes/articles')
 const locketRoutes = require('./routes/lockets')
-const fontRoutes = require('./routes/fonts')
 
 // Little WRLD
 const childAuthRoutes = require('./routes/littleWRLD/childAuth')
@@ -73,7 +72,6 @@ app.use('/api/moderation', moderationRoutes)
 app.use('/api/archive', archiveRoutes)
 app.use('/api/articles', articleRoutes)
 app.use('/api/lockets', locketRoutes)
-app.use('/api/fonts', fontRoutes)
 
 // Little WRLD
 app.use('/api/little/auth', childAuthRoutes)

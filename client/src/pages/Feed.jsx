@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import CreatePost from '../components/CreatePost'
 import StoriesBar from '../components/StoriesBar'
-
+import { useAuth } from '../context/AuthContext'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
@@ -38,47 +38,45 @@ export default function Feed() {
     </div>
   )
 
- return (
-  <div className="max-w-xl mx-auto px-4 py-6">
+  return (
+    <div className="max-w-xl mx-auto px-4 py-6">
 
-    {/* Feed header */}
-    <div className="mb-6">
-      <h1 className="text-xl font-bold"
-        style={{ color: 'var(--color-text)' }}>
-        Your Feed
-      </h1>
-    </div>
-
-    {/* Create post */}
-    <StoriesBar />
-    <CreatePost onSuccess={fetchFeed} />
-
-    {/* Posts or empty state */}
-    {posts.length === 0 ? (
-      <div className="text-center py-20">
-        <p className="text-4xl mb-4">🌍</p>
-        <p className="font-semibold mb-2"
+      <div className="mb-6">
+        <h1 className="text-xl font-bold"
           style={{ color: 'var(--color-text)' }}>
-          Your feed is empty
-        </p>
-        <p className="text-sm"
-          style={{ color: 'var(--color-text-muted)' }}>
-          Follow people to see their posts here
-        </p>
+          Your Feed
+        </h1>
       </div>
-    ) : (
-      <div className="flex flex-col gap-4">
-        {posts.map(post => (
-          <PostCard key={post._id} post={post} onUpdate={fetchFeed} />
-        ))}
-      </div>
-    )}
 
-  </div>
-)
+      <StoriesBar />
+      <CreatePost onSuccess={fetchFeed} />
+
+      {posts.length === 0 ? (
+        <div className="text-center py-20">
+          <p className="text-4xl mb-4">🌍</p>
+          <p className="font-semibold mb-2"
+            style={{ color: 'var(--color-text)' }}>
+            Your feed is empty
+          </p>
+          <p className="text-sm"
+            style={{ color: 'var(--color-text-muted)' }}>
+            Follow people to see their posts here
+          </p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {posts.map(post => (
+            <PostCard key={post._id} post={post} onUpdate={fetchFeed} />
+          ))}
+        </div>
+      )}
+
+    </div>
+  )
 }
 
 function PostCard({ post, onUpdate }) {
+  const { user } = useAuth()
   const [liked, setLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(post.likes?.length || 0)
   const [showComments, setShowComments] = useState(false)
@@ -112,6 +110,16 @@ function PostCard({ post, onUpdate }) {
     }
   }
 
+  const handleDelete = async () => {
+    if (!window.confirm('Delete this post?')) return
+    try {
+      await axios.delete(`${API}/api/posts/${post._id}`)
+      onUpdate()
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   return (
     <div className="rounded-2xl overflow-hidden"
       style={{
@@ -119,7 +127,6 @@ function PostCard({ post, onUpdate }) {
         border: '1px solid var(--color-border)'
       }}>
 
-      {/* Post header */}
       <div className="flex items-center gap-3 px-4 pt-4 pb-3">
         <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
           style={{
@@ -139,8 +146,8 @@ function PostCard({ post, onUpdate }) {
             @{post.author?.username} · {new Date(post.createdAt).toLocaleDateString()}
           </p>
         </div>
-        {/* Post type badge */}
-        <div className="ml-auto">
+
+        <div className="ml-auto flex items-center gap-2">
           <span className="text-xs px-2 py-0.5 rounded-full font-medium"
             style={{
               backgroundColor: 'rgba(255,215,0,0.08)',
@@ -149,10 +156,17 @@ function PostCard({ post, onUpdate }) {
             }}>
             {post.postType || 'post'}
           </span>
+          {post.author?._id === user?.id && (
+            <button
+              onClick={handleDelete}
+              className="text-xs"
+              style={{ color: '#ff5050', background: 'none', border: 'none', cursor: 'pointer' }}>
+              Delete
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Post content */}
       {post.content && (
         <div className="px-4 pb-3">
           <p className="text-sm leading-relaxed"
@@ -162,7 +176,6 @@ function PostCard({ post, onUpdate }) {
         </div>
       )}
 
-      {/* Hashtags */}
       {post.hashtags?.length > 0 && (
         <div className="px-4 pb-3 flex flex-wrap gap-1">
           {post.hashtags.map(tag => (
@@ -175,7 +188,6 @@ function PostCard({ post, onUpdate }) {
         </div>
       )}
 
-      {/* Media */}
       {post.media?.length > 0 && (
         <div className="w-full">
           {post.media[0].type === 'image' ? (
@@ -194,11 +206,9 @@ function PostCard({ post, onUpdate }) {
         </div>
       )}
 
-      {/* Actions */}
       <div className="flex items-center gap-4 px-4 py-3"
         style={{ borderTop: '1px solid var(--color-border)' }}>
 
-        {/* Like */}
         <button
           onClick={handleLike}
           className="flex items-center gap-1.5 text-sm transition-all"
@@ -212,7 +222,6 @@ function PostCard({ post, onUpdate }) {
           <span>{likeCount}</span>
         </button>
 
-        {/* Comment */}
         <button
           onClick={() => setShowComments(!showComments)}
           className="flex items-center gap-1.5 text-sm transition-all"
@@ -226,7 +235,6 @@ function PostCard({ post, onUpdate }) {
           <span>{post.comments?.length || 0}</span>
         </button>
 
-        {/* Views */}
         <span className="flex items-center gap-1.5 text-sm ml-auto"
           style={{ color: 'var(--color-text-faint)' }}>
           <span>👁</span>
@@ -235,12 +243,10 @@ function PostCard({ post, onUpdate }) {
 
       </div>
 
-      {/* Comments section */}
       {showComments && (
         <div className="px-4 pb-4"
           style={{ borderTop: '1px solid var(--color-border)' }}>
 
-          {/* Existing comments */}
           {post.comments?.length > 0 && (
             <div className="flex flex-col gap-3 pt-3 mb-3">
               {post.comments.map(c => (
@@ -268,7 +274,6 @@ function PostCard({ post, onUpdate }) {
             </div>
           )}
 
-          {/* Add comment */}
           <form onSubmit={handleComment} className="flex gap-2 pt-3">
             <input
               value={comment}

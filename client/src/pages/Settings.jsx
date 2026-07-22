@@ -177,11 +177,6 @@ export default function Settings() {
   fontFamily: 'var(--font-primary)'
   }
 
-useEffect(() => {
-  fetchMyFonts()
-}, [])
-
-
   return (
     <div className="flex min-h-screen">
 
